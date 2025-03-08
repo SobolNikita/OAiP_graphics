@@ -10,22 +10,93 @@ uses
 type
   TArr = array [1 .. 4, 1 .. 2, 1 .. 2] of integer;
 
+(*
+procedure TForm1.DrawFrame;
+begin
+  MC := TMyCanvas.Create; // используем конструктор родительского класса
+  MC.Handle := Canvas.Handle; // назначаем холст окна областью вывода
+  case FrameIndex of
+    1: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 49, 50, 52, 56, 50, 62, 47, 48,
+        70, 43, 73, 57, 69, 57, 74);
+    2:MC.DrawCharacter(100 + X, 100, 10, 10, 45, 51, 50, 50, 54, 51, 60, 46, 51,
+        67, 46, 73, 56, 68, 56, 74);
+    3:MC.DrawCharacter(100 + X, 100, 10, 10, 45, 50, 50, 51, 54, 50, 59, 45, 51,
+        69, 50, 74, 56, 69, 48, 70);
+    4:MC.DrawCharacter(100 + X, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
+        70, 50, 75, 57, 69, 56, 73);
+  end;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  BitMap:TBitMap;
+begin
+   // Создание объекта BitMap типа TBitMap
+   BitMap:=TBitMap.Create;
+  // Указание пути к файлу напрямую
+  BitMap.LoadFromFile('Images\fon.bmp');
+   // Перенос изображения на канву формы
+   XImage := 10;
+   YImage:= 10;
+   Canvas.Draw(XImage, YImage, BitMap);
+   // Уничтожение объекта BitMap
+   BitMap.Free;
+   Timer2.Enabled := True;
+
+  FrameIndex := 1; // Начинаем с первого кадра
+  Timer1.Enabled := True; // Запускаем таймер
+  X := 100;
+  Y := 100;
+  Timer1.Enabled := True;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  DrawFrame; // Рисуем текущий кадр
+  FrameIndex := FrameIndex mod 4 + 1; // Переход к следующему кадру
+  X := X + 1;
+  if (X >= ClientWidth - 20) then
+    Timer1.Enabled := false;
+end;
+
+procedure TForm1.Timer2Timer(Sender: TObject);
+var
+  BitMap: TBitMap;
+  X, Y: Integer;
+begin
+  // Координаты появления изображения
+  XImage := XImage - 2;
+  // Создание объекта BitMap типа TBitMap
+  BitMap := TBitMap.Create;
+  try
+    // Указание пути к файлу напрямую
+  BitMap.LoadFromFile('Images\fon.bmp');
+    // Перенос изображения на канву формы
+    Canvas.Draw(XImage, YImage, BitMap);
+  finally
+    // Уничтожение объекта BitMap
+    BitMap.Free;
+  end;
+end;
+
+end.*)
+
   TForm1 = class(TForm)
     Button1: TButton;
     Timer1: TTimer;
     Button2: TButton;
     Timer2: TTimer;
-    Button3: TButton;
     procedure FormPaint(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
-
   private
     { Private declarations }
     FrameIndex: integer; // Индекс текущего кадра
+    XImage, YImage: Integer; // Позиция фона
+    procedure DrawBackground; // Процедура для рисования фона
+    procedure DrawCharacter; // Процедура для рисования персонажа
   public
     { Public declarations }
     procedure DrawFrame;
@@ -40,7 +111,7 @@ type
 
 var
   Form1: TForm1;
-  X, Y, XImage, YImage: integer;
+  X, Y: integer;
   MC: TMyCanvas;
 
 implementation
@@ -80,6 +151,41 @@ begin
     Point(RightLeg2X * Xpr + X, RightLeg2Y * Ypr + Y)]);
 end;
 
+procedure TForm1.DrawBackground;
+var
+  BitMap: TBitmap;
+begin
+  BitMap := TBitmap.Create;
+  try
+    BitMap.LoadFromFile('Images\fon.bmp'); // Укажите путь к изображению фона
+    Canvas.Draw(XImage, YImage, BitMap); // Рисуем фон
+  finally
+    BitMap.Free;
+  end;
+end;
+
+procedure TForm1.DrawCharacter;
+begin
+  case FrameIndex of
+    1: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 49, 50, 52, 56, 50, 62, 47, 48,
+        70, 43, 73, 57, 69, 57, 74);
+    2: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 51, 50, 50, 54, 51, 60, 46, 51,
+        67, 46, 73, 56, 68, 56, 74);
+    3: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 50, 50, 51, 54, 50, 59, 45, 51,
+        69, 50, 74, 56, 69, 48, 70);
+    4: MC.DrawCharacter(100 + X, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
+        70, 50, 75, 57, 69, 56, 73);
+  end;
+end;
+
+procedure TForm1.DrawFrame;
+begin
+  MC := TMyCanvas.Create; // используем конструктор родительского класса
+  MC.Handle := Canvas.Handle; // назначаем холст окна областью вывода
+  DrawBackground; // Рисуем фон
+  DrawCharacter; // Рисуем персонажа
+end;
+
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
@@ -98,49 +204,16 @@ begin
   Form1.Canvas.Polyline([Point(510, 490), Point(650, 320)]); // палка
 end;
 
-procedure TForm1.Button3Click(Sender: TObject);
-var
-  BitMap:TBitMap;
-begin
-   // Создание объекта BitMap типа TBitMap
-   BitMap:=TBitMap.Create;
-  // Указание пути к файлу напрямую
-    BitMap.LoadFromFile('D:\ПОИТ\2 sem\OAiP\LabWorkNum2\fon.bmp');
-   // Перенос изображения на канву формы
-   XImage := 10;
-   YImage:= 10;
-   Canvas.Draw(XImage, YImage, BitMap);
-   // Уничтожение объекта BitMap
-   BitMap.Free;
-   Timer2.Enabled := True;
-end;
-
-procedure TForm1.DrawFrame;
-begin
-  MC := TMyCanvas.Create; // используем конструктор родительского класса
-  MC.Handle := Canvas.Handle; // назначаем холст окна областью вывода
-  Canvas.FillRect(ClientRect); // Очистка экрана
-
-  case FrameIndex of
-    1: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 49, 50, 52, 56, 50, 62, 47, 48,
-        70, 43, 73, 57, 69, 57, 74);
-    2:MC.DrawCharacter(100 + X, 100, 10, 10, 45, 51, 50, 50, 54, 51, 60, 46, 51,
-        67, 46, 73, 56, 68, 56, 74);
-    3:MC.DrawCharacter(100 + X, 100, 10, 10, 45, 50, 50, 51, 54, 50, 59, 45, 51,
-        69, 50, 74, 56, 69, 48, 70);
-    4:MC.DrawCharacter(100 + X, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
-        70, 50, 75, 57, 69, 56, 73);
-  end;
-
-end;
-
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  FrameIndex := 1; // Начинаем с первого кадра
-  Timer1.Enabled := True; // Запускаем таймер
+  XImage := 0; // Инициализация позиции фона
+  YImage := 0; // Инициализация позиции фона
+  Timer2.Enabled := True;
+
   X := 100;
   Y := 100;
-  Timer1.Enabled := True;
+  FrameIndex := 1; // Начинаем с первого кадра
+  Timer1.Enabled := True; // Запускаем таймер
 end;
 
 procedure TForm1.FormPaint(Sender: TObject);
@@ -152,37 +225,18 @@ end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
-  DrawFrame; // Рисуем текущий кадр
+
   FrameIndex := FrameIndex mod 4 + 1; // Переход к следующему кадру
-  X := X + 8;
+  X := X + 1;
   if (X >= ClientWidth - 20) then
     Timer1.Enabled := false;
 end;
 
 procedure TForm1.Timer2Timer(Sender: TObject);
-var
-  BitMap: TBitMap;
-  X, Y: Integer;
 begin
-  // Координаты появления изображения
-  XImage := XImage - 5;
-  // Создание объекта BitMap типа TBitMap
-  BitMap := TBitMap.Create;
-  try
-    // Указание пути к файлу напрямую
-   BitMap.LoadFromFile('D:\ПОИТ\2 sem\OAiP\LabWorkNum2\fon.bmp');
-    // Перенос изображения на канву формы
-    Canvas.Draw(XImage, YImage, BitMap);
-  finally
-    // Уничтожение объекта BitMap
-    BitMap.Free;
-  end;
-
-  // Задержка перед очисткой канвы
-  //Sleep(500);
-
-  // Очистка канвы
- // Canvas.FillRect(ClientRect);
+DrawFrame; // Рисуем текущий кадр
+  // Обновляем позицию фона
+  XImage := XImage - 1; // Двигаем фон влево
 end;
 
 end.

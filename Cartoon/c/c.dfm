@@ -29,15 +29,6 @@ object Form1: TForm1
     TabOrder = 1
     OnClick = Button2Click
   end
-  object Button3: TButton
-    Left = 1000
-    Top = 537
-    Width = 225
-    Height = 97
-    Caption = 'Button3'
-    TabOrder = 2
-    OnClick = Button3Click
-  end
   object Timer1: TTimer
     Enabled = False
     Interval = 250
