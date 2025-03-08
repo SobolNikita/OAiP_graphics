@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ExtDlgs;
 
 type
   TArr = array [1 .. 4, 1 .. 2, 1 .. 2] of integer;
@@ -14,10 +14,14 @@ type
     Button1: TButton;
     Timer1: TTimer;
     Button2: TButton;
+    Timer2: TTimer;
+    Button3: TButton;
     procedure FormPaint(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Timer2Timer(Sender: TObject);
 
   private
     { Private declarations }
@@ -36,7 +40,7 @@ type
 
 var
   Form1: TForm1;
-  X, Y: integer;
+  X, Y, XImage, YImage: integer;
   MC: TMyCanvas;
 
 implementation
@@ -94,6 +98,23 @@ begin
   Form1.Canvas.Polyline([Point(510, 490), Point(650, 320)]); // палка
 end;
 
+procedure TForm1.Button3Click(Sender: TObject);
+var
+  BitMap:TBitMap;
+begin
+   // Создание объекта BitMap типа TBitMap
+   BitMap:=TBitMap.Create;
+  // Указание пути к файлу напрямую
+  BitMap.LoadFromFile('Images\fon.bmp');
+   // Перенос изображения на канву формы
+   XImage := 10;
+   YImage:= 10;
+   Canvas.Draw(XImage, YImage, BitMap);
+   // Уничтожение объекта BitMap
+   BitMap.Free;
+   Timer2.Enabled := True;
+end;
+
 procedure TForm1.DrawFrame;
 begin
   MC := TMyCanvas.Create; // используем конструктор родительского класса
@@ -138,23 +159,26 @@ begin
     Timer1.Enabled := false;
 end;
 
+procedure TForm1.Timer2Timer(Sender: TObject);
+var
+  BitMap: TBitMap;
+  X, Y: Integer;
+begin
+  // Координаты появления изображения
+  XImage := XImage - 2;
+  // Создание объекта BitMap типа TBitMap
+  BitMap := TBitMap.Create;
+  try
+    // Указание пути к файлу напрямую
+  BitMap.LoadFromFile('Images\fon.bmp');
+    // Перенос изображения на канву формы
+    Canvas.Draw(XImage, YImage, BitMap);
+  finally
+    // Уничтожение объекта BitMap
+    BitMap.Free;
+  end;
+end;
+
 end.
 
-(* ДА, Я ПЕРЕДАЮ В ПРОЦЕДУРУ 20 ПАРАМЕТРОВ, МОЖНО И УДОБНЕЕ ВООБЩЕ ЗАПИСЯМИ ИЛИ МАССИВОМ,
-  НО Я НЕ ЗНАЮ КАК ЕГО КАЖДЫЙ РАЗ ИНИЦИАЛИЗИРОВАТЬ *)
-
-(* TXY = record
-  X: integer;
-  Y: integer;
-  end;
-
-  TOffset = record
-  LeftArm1: TXY;
-  LeftArm2: TXY;
-  RightArm1: TXY;
-  RightArm2: TXY;
-  LeftLeg1: TXY;
-  LeftLeg2: TXY;
-  RightLeg1: TXY;
-  RightLeg2: TXY;
-  end; *)
+// ОСНОВА
