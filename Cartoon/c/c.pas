@@ -8,6 +8,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
 
 type
+  TArr = array [1 .. 4, 1 .. 2, 1 .. 2] of integer;
+
   TForm1 = class(TForm)
     Button1: TButton;
     Timer1: TTimer;
@@ -19,113 +21,77 @@ type
 
   private
     { Private declarations }
-    FrameIndex: Integer; // Индекс текущего кадра
+    FrameIndex: integer; // Индекс текущего кадра
   public
     { Public declarations }
     procedure DrawFrame;
   end;
 
   TMyCanvas = class(TCanvas)
-    procedure _1Run(X, Y, Xpr, Ypr: Integer);
-    procedure _2Run(X, Y, Xpr, Ypr: Integer);
-    procedure _3Run(X, Y: Integer; Xpr, Ypr: Integer);
-    procedure _4Run(X, Y: Integer; Xpr, Ypr: Integer);
-    procedure Frame3(X, Y: Integer; Xpr, Ypr: Integer);
+    procedure DrawCharacter(X, Y, Xpr, Ypr, LeftArm1X, LeftArm1Y, LeftArm2X,
+      LeftArm2Y, RightArm1X, RightArm1Y, RightArm2X, RightArm2Y, LeftLeg1X,
+      LeftLeg1Y, LeftLeg2X, LeftLeg2Y, RightLeg1X, RightLeg1Y, RightLeg2X,
+      RightLeg2Y: integer);
   end;
 
 var
   Form1: TForm1;
-  X, Y: Integer;
-  IsDrawingFirst: boolean;
+  X, Y: integer;
   MC: TMyCanvas;
 
 implementation
 
 {$R *.dfm}
 
-procedure TMyCanvas._1Run(X, Y: Integer; Xpr, Ypr: Integer);
+procedure TMyCanvas.DrawCharacter(X, Y, Xpr, Ypr, LeftArm1X, LeftArm1Y,
+  LeftArm2X, LeftArm2Y, RightArm1X, RightArm1Y, RightArm2X, RightArm2Y,
+  LeftLeg1X, LeftLeg1Y, LeftLeg2X, LeftLeg2Y, RightLeg1X, RightLeg1Y,
+  RightLeg2X, RightLeg2Y: integer);
 begin
-  Form1.Canvas.Ellipse(47 * Xpr + X, 40 * Ypr + Y, 57 * Xpr + X, 30 * Ypr + Y);
   // голова
-  Form1.Canvas.MoveTo(52 * Xpr + X, 40 * Ypr + Y); // от головы
-  Form1.Canvas.LineTo(49 * Xpr + X, 62 * Ypr + Y); // конец тулова
-  Form1.Canvas.Polyline([point(51 * Xpr + X, 46 * Ypr + Y), point(45 * Xpr + X,
-    49 * Ypr + Y), point(50 * Xpr + X, 52 * Ypr + Y)]); // левая рука
-  Form1.Canvas.Polyline([point(51 * Xpr + X, 46 * Ypr + Y), point(56 * Xpr + X,
-    50 * Ypr + Y), point(62 * Xpr + X, 47 * Ypr + Y)]); // правая рука
-  Form1.Canvas.Polyline([point(49 * Xpr + X, 62 * Ypr + Y), point(48 * Xpr + X,
-    70 * Ypr + Y), point(43 * Xpr + X, 73 * Ypr + Y)]); // левая нога
-  Form1.Canvas.Polyline([point(49 * Xpr + X, 62 * Ypr + Y), point(57 * Xpr + X,
-    69 * Ypr + Y), point(57 * Xpr + X, 74 * Ypr + Y)]); // правая нога
-  Form1.Canvas.Polyline([point(66 * Xpr + X, 32 * Ypr + Y), point(41 * Xpr + X,
-    63 * Ypr + Y)]); // палка
-end;
-
-procedure TMyCanvas._2Run(X, Y: Integer; Xpr, Ypr: Integer);
-begin
   Form1.Canvas.Ellipse(47 * Xpr + X, 40 * Ypr + Y, 57 * Xpr + X, 30 * Ypr + Y);
-  // голова
-  Form1.Canvas.MoveTo(52* Xpr + x, 40* Ypr + Y); // от головы
-  Form1.Canvas.LineTo(52 * Xpr+ x, 62* Ypr + Y); // конец тулова
-  Form1.Canvas.Polyline([point(52* Xpr + x, 45* Ypr + Y),point(45 * Xpr+ x, 51* Ypr + Y) ,point(50* Xpr + x, 50* Ypr + Y)]); //  левая рука
-  Form1.Canvas.Polyline([point(52 * Xpr+ x, 45* Ypr + Y), point(54* Xpr + x, 51* Ypr + Y), point(60* Xpr + x, 46* Ypr + Y)]);  //правая рука
-  Form1.Canvas.Polyline([point(52 * Xpr+ x,62* Ypr + Y),point(51* Xpr + x, 67* Ypr + Y), point(46* Xpr + x, 73* Ypr + Y) ]);  //левая нога
-  Form1.Canvas.Polyline([point(52 * Xpr+ x, 62* Ypr + Y), point(56 * Xpr+ x, 68* Ypr + Y), point(56* Xpr + x,74* Ypr + Y)]); //правая нога
-  Form1.Canvas.Polyline([point(68 * Xpr+ x,33* Ypr + Y), point(40* Xpr + x,59* Ypr + Y)]);  //палка
+
+  // туловище
+  Form1.Canvas.MoveTo(52 * Xpr + X, 40 * Ypr + Y);
+  Form1.Canvas.LineTo(52 * Xpr + X, 62 * Ypr + Y); // конец тулова
+
+  // левая рука
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 45 * Ypr + Y),
+    Point(LeftArm1X * Xpr + X, LeftArm1Y * Ypr + Y), Point(LeftArm2X * Xpr + X,
+    LeftArm2Y * Ypr + Y)]);
+
+  // правая рука
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 45 * Ypr + Y),
+    Point(RightArm1X * Xpr + X, RightArm1Y * Ypr + Y),
+    Point(RightArm2X * Xpr + X, RightArm2Y * Ypr + Y)]);
+
+  // левая нога
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
+    Point(LeftLeg1X * Xpr + X, LeftLeg1Y * Ypr + Y), Point(LeftLeg2X * Xpr + X,
+    LeftLeg2Y * Ypr + Y)]);
+
+  // правая нога
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
+    Point(RightLeg1X * Xpr + X, RightLeg1Y * Ypr + Y),
+    Point(RightLeg2X * Xpr + X, RightLeg2Y * Ypr + Y)]);
 end;
 
-
-procedure TMyCanvas._3Run(X, Y: Integer; Xpr, Ypr: Integer);
-begin
-  Form1.Canvas.Ellipse(47 * Xpr + X, 40 * Ypr + Y, 57 * Xpr + X, 30 * Ypr + Y);// голова
-  Form1.Canvas.MoveTo(52* Xpr + X, 40* Ypr + Y); // от головы
-  Form1.Canvas.LineTo(51* Xpr + X, 62* Ypr + Y); // конец тулова
-  Form1.Canvas.Polyline([point(52* Xpr + X, 45* Ypr + Y),point(45* Xpr + X, 50* Ypr + Y) ,point(50* Xpr + X, 51* Ypr + Y)]); //  левая рука
-  Form1.Canvas.Polyline([point(52* Xpr + X, 45* Ypr + Y), point(54* Xpr + X, 50* Ypr + Y), point(59* Xpr + X, 45* Ypr + Y)]);  //правая рука
-  Form1.Canvas.Polyline([point(51* Xpr + X,62* Ypr + Y),point(51* Xpr + X, 69* Ypr + Y), point(50* Xpr + X, 74* Ypr + Y) ]);  //правая нога
-  Form1.Canvas.Polyline([point(51* Xpr + X, 62* Ypr + Y), point(56* Xpr + X, 69* Ypr + Y), point(48* Xpr + X,70* Ypr + Y)]); //левая нога
-  Form1.Canvas.Polyline([point(50* Xpr + X,51* Ypr + Y), point(41* Xpr + X,63* Ypr + Y)]);  //палка
-   Form1.Canvas.Polyline([point(50* Xpr + X,51* Ypr + Y), point(66* Xpr + X,32* Ypr + Y)]);  //палка
-end;
-
-procedure TMyCanvas.Frame3(X, Y: Integer; Xpr, Ypr: Integer);
-begin
-  Form1.Canvas.Ellipse(47* Xpr + X, 40* Ypr + Y, 57* Xpr + X, 30* Ypr + Y); // голова
-  Form1.Canvas.MoveTo(52* Xpr + X, 40* Ypr + Y); // от головы
-  Form1.Canvas.LineTo(52* Xpr + X, 62* Ypr + Y); // конец тулова
-  Form1.Canvas.Polyline([point(52* Xpr + X, 46* Ypr + Y),point(47* Xpr + X, 52* Ypr + Y) ,point(50* Xpr + X, 51* Ypr + Y)]); //  левая рука
-  Form1.Canvas.Polyline([point(52* Xpr + X, 46* Ypr + Y), point(54* Xpr + X, 50* Ypr + Y), point(59* Xpr + X, 47* Ypr + Y)]);  //правая рука
-  Form1.Canvas.Polyline([point(52* Xpr + X,62* Ypr + Y),point(51* Xpr + X, 71* Ypr + Y), point(45* Xpr + X, 70* Ypr + Y) ]);  //левая нога
-  Form1.Canvas.Polyline([point(52* Xpr + X, 62* Ypr + Y), point(56* Xpr + X, 69* Ypr + Y), point(55* Xpr + X,75* Ypr + Y)]); //правая нога
-  Form1.Canvas.Polyline([point(50* Xpr + X,51* Ypr + Y), point(41* Xpr + X,63* Ypr + Y)]);  //палка
-   Form1.Canvas.Polyline([point(50* Xpr + X,51* Ypr + Y), point(66* Xpr + X,32* Ypr + Y)]);  //палка
-end;
-
-procedure TMyCanvas._4Run(X, Y: Integer; Xpr, Ypr: Integer);
-begin
-  Form1.Canvas.Ellipse(47 * Xpr + X, 40 * Ypr + Y, 57 * Xpr + X, 30 * Ypr + Y);// голова
-  Form1.Canvas.MoveTo(52* Xpr + X, 40* Ypr + Y); // от головы
-  Form1.Canvas.LineTo(52* Xpr + X, 61* Ypr + Y); // конец тулова
-  Form1.Canvas.Polyline([point(52* Xpr + X, 45* Ypr + Y),point(47* Xpr + X, 51* Ypr + Y) ,point(51* Xpr + X, 49* Ypr + Y)]); //  левая рука
-  Form1.Canvas.Polyline([point(52* Xpr + X, 45* Ypr + Y), point(54* Xpr + X, 50* Ypr + Y), point(57* Xpr + X, 46* Ypr + Y)]);  //правая рука
-  Form1.Canvas.Polyline([point(52* Xpr + X, 61* Ypr + Y),point(53* Xpr + X, 70* Ypr + Y), point(50* Xpr + X, 75* Ypr + Y) ]);  //правая нога
-  Form1.Canvas.Polyline([point(52* Xpr + X, 61* Ypr + Y), point(57* Xpr + X, 69* Ypr + Y), point(56* Xpr + X,73* Ypr + Y)]); //левая нога
-  Form1.Canvas.Polyline([point(51* Xpr + X,49* Ypr + Y), point(41* Xpr + X,63* Ypr + Y)]);  //палка
-   Form1.Canvas.Polyline([point(51* Xpr + X,49* Ypr + Y), point(65* Xpr + X,32* Ypr + Y)]);  //палка
-end;
-
-// Метод для рисования текущего кадра
+// Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
   Form1.Canvas.Ellipse(470, 400, 570, 300); // голова
   Form1.Canvas.MoveTo(520, 400); // от головы
   Form1.Canvas.LineTo(520, 610); // конец тулова
-  Form1.Canvas.Polyline([point(520, 450),point(470, 510) ,point(510, 490)]); //  левая рука
-  Form1.Canvas.Polyline([point(520, 450), point(540, 500), point(570, 460)]);  //правая рука
-  Form1.Canvas.Polyline([point(520, 610),point(530, 700), point(500, 750) ]);  //правая нога
-  Form1.Canvas.Polyline([point(520, 610), point(570, 690), point(560,730)]); //левая нога
-  Form1.Canvas.Polyline([point(510,490), point(410,630)]);  //палка
-   Form1.Canvas.Polyline([point(510,490), point(650,320)]);  //палка
+  Form1.Canvas.Polyline([Point(520, 450), Point(480, 500), Point(470, 460)]);
+  // левая рука
+  Form1.Canvas.Polyline([Point(520, 450), Point(540, 500), Point(570, 460)]);
+  // правая рука
+  Form1.Canvas.Polyline([Point(520, 610), Point(530, 700), Point(500, 750)]);
+  // правая нога
+  Form1.Canvas.Polyline([Point(520, 610), Point(570, 690), Point(560, 730)]);
+  // левая нога
+  Form1.Canvas.Polyline([Point(510, 490), Point(410, 630)]); // палка
+  Form1.Canvas.Polyline([Point(510, 490), Point(650, 320)]); // палка
 end;
 
 procedure TForm1.DrawFrame;
@@ -135,11 +101,16 @@ begin
   Canvas.FillRect(ClientRect); // Очистка экрана
 
   case FrameIndex of
-    1:MC._1Run(100 + X, 100, 10, 10);
-    2:MC._2Run(100 + X, 100, 10, 10);
-    3:MC._3Run(100 + X, 100, 10, 10);
-    4:MC._4Run(100 + X, 100, 10, 10);
+    1: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 49, 50, 52, 56, 50, 62, 47, 48,
+        70, 43, 73, 57, 69, 57, 74);
+    2:MC.DrawCharacter(100 + X, 100, 10, 10, 45, 51, 50, 50, 54, 51, 60, 46, 51,
+        67, 46, 73, 56, 68, 56, 74);
+    3:MC.DrawCharacter(100 + X, 100, 10, 10, 45, 50, 50, 51, 54, 50, 59, 45, 51,
+        69, 50, 74, 56, 69, 48, 70);
+    4:MC.DrawCharacter(100 + X, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
+        70, 50, 75, 57, 69, 56, 73);
   end;
+
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -168,3 +139,22 @@ begin
 end;
 
 end.
+
+(* ДА, Я ПЕРЕДАЮ В ПРОЦЕДУРУ 20 ПАРАМЕТРОВ, МОЖНО И УДОБНЕЕ ВООБЩЕ ЗАПИСЯМИ ИЛИ МАССИВОМ,
+  НО Я НЕ ЗНАЮ КАК ЕГО КАЖДЫЙ РАЗ ИНИЦИАЛИЗИРОВАТЬ *)
+
+(* TXY = record
+  X: integer;
+  Y: integer;
+  end;
+
+  TOffset = record
+  LeftArm1: TXY;
+  LeftArm2: TXY;
+  RightArm1: TXY;
+  RightArm2: TXY;
+  LeftLeg1: TXY;
+  LeftLeg2: TXY;
+  RightLeg1: TXY;
+  RightLeg2: TXY;
+  end; *)

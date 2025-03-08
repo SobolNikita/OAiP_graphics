@@ -1,0 +1,154 @@
+unit c;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+
+type
+TArr=array[1..4] of Integer;
+  TForm1 = class(TForm)
+    Button1: TButton;
+    Timer1: TTimer;
+    Button2: TButton;
+    procedure FormPaint(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+
+  private
+    { Private declarations }
+    FrameIndex: Integer; // Индекс текущего кадра
+    Offset: TArr; // Смещения для каждого кадра
+  public
+    { Public declarations }
+    procedure DrawFrame;
+  end;
+
+  TMyCanvas = class(TCanvas)
+ procedure DrawCharacter(X, Y: Integer; Xpr, Ypr: Integer;
+  LeftArmOffset, RightArmOffset, LeftLegOffset, RightLegOffset: Integer);
+    procedure _1Run(X, Y, Xpr, Ypr: Integer);
+    procedure _2Run(X, Y, Xpr, Ypr: Integer);
+    procedure _3Run(X, Y: Integer; Xpr, Ypr: Integer);
+    procedure _4Run(X, Y: Integer; Xpr, Ypr: Integer);
+  end;
+
+var
+  Form1: TForm1;
+  X, Y: Integer;
+  IsDrawingFirst: boolean;
+  MC: TMyCanvas;
+
+implementation
+
+{$R *.dfm}
+procedure TMyCanvas.DrawCharacter(X, Y: Integer; Xpr, Ypr: Integer;
+  LeftArmOffset, RightArmOffset, LeftLegOffset, RightLegOffset: Integer);
+begin
+  // голова
+  Form1.Canvas.Ellipse(47 * Xpr + X, 40 * Ypr + Y, 57 * Xpr + X, 30 * Ypr + Y);
+
+  // туловище
+  Form1.Canvas.MoveTo(52 * Xpr + X, 40 * Ypr + Y);
+  Form1.Canvas.LineTo(52 * Xpr + X, 62 * Ypr + Y); // конец тулова
+
+  // левая рука
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 45 * Ypr + Y),
+                          Point(47 * Xpr + X + LeftArmOffset, 51 * Ypr + Y),
+                          Point(51 * Xpr + X, 49 * Ypr + Y)]);
+
+  // правая рука
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 45 * Ypr + Y),
+                          Point(54 * Xpr + X + RightArmOffset, 50 * Ypr + Y),
+                          Point(57 * Xpr + X, 46 * Ypr + Y)]);
+
+  // левая нога
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
+                          Point(52 * Xpr + X - LeftLegOffset, 70 * Ypr + Y),
+                          Point(50 * Xpr + X, 75 * Ypr + Y)]);
+
+  // правая нога
+  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
+                          Point(56 * Xpr + X + RightLegOffset, 69 * Ypr + Y),
+                          Point(56 * Xpr + X, 74 * Ypr + Y)]);
+end;
+
+
+procedure TMyCanvas._1Run(X, Y: Integer; Xpr, Ypr: Integer);
+begin
+   DrawCharacter(X, Y, Xpr, Ypr, 0, 0, 0, 0); // смещения для рук и ног равны 0
+end;
+
+procedure TMyCanvas._2Run(X, Y: Integer; Xpr, Ypr: Integer);
+begin
+   DrawCharacter(X, Y, Xpr, Ypr, -7, 4, 1, 0); // смещения для рук и ног
+end;
+
+
+procedure TMyCanvas._3Run(X, Y: Integer; Xpr, Ypr: Integer);
+begin
+  DrawCharacter(X, Y, Xpr, Ypr, -7, 3, 0, 0); // смещения для рук и ног
+end;
+
+procedure TMyCanvas._4Run(X, Y: Integer; Xpr, Ypr: Integer);
+begin
+ DrawCharacter(X, Y, Xpr, Ypr, -7, 4, 1, 0); // смещения для рук и ног
+end;
+
+// Метод для рисования текущего кадра
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  Form1.Canvas.Ellipse(470, 400, 570, 300); // голова
+  Form1.Canvas.MoveTo(520, 400); // от головы
+  Form1.Canvas.LineTo(520, 610); // конец тулова
+  Form1.Canvas.Polyline([point(520, 450),point(480, 500) ,point(470, 460)]); //  левая рука
+  Form1.Canvas.Polyline([point(520, 450), point(540, 500), point(570, 460)]);  //правая рука
+  Form1.Canvas.Polyline([point(520, 610),point(530, 700), point(500, 750) ]);  //правая нога
+  Form1.Canvas.Polyline([point(520, 610), point(570, 690), point(560,730)]); //левая нога
+  Form1.Canvas.Polyline([point(510,490), point(410,630)]);  //палка
+   Form1.Canvas.Polyline([point(510,490), point(650,320)]);  //палка
+end;
+
+procedure TForm1.DrawFrame;
+begin
+  MC := TMyCanvas.Create; // используем конструктор родительского класса
+  MC.Handle := Canvas.Handle; // назначаем холст окна областью вывода
+  Canvas.FillRect(ClientRect); // Очистка экрана
+
+  case FrameIndex of
+    1:MC._1Run(100 + X, 100, 10, 10);
+    2:MC._2Run(100 + X, 100, 10, 10);
+    3:MC._3Run(100 + X, 100, 10, 10);
+    4:MC._4Run(100 + X, 100, 10, 10);
+  end;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  FrameIndex := 1; // Начинаем с первого кадра
+  Timer1.Enabled := True; // Запускаем таймер
+  X := 100;
+  Y := 100;
+  Timer1.Enabled := True;
+end;
+
+procedure TForm1.FormPaint(Sender: TObject);
+begin
+  Canvas.Brush.Color := clWhite;
+  Color := clWhite;
+  Canvas.Pen.Mode := pmNotXor;
+end;
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+begin
+  DrawFrame; // Рисуем текущий кадр
+  FrameIndex := FrameIndex mod 4 + 1; // Переход к следующему кадру
+  X := X + 8;
+  if (X >= ClientWidth - 20) then
+    Timer1.Enabled := false;
+end;
+
+end.
