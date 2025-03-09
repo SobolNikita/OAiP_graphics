@@ -86,8 +86,8 @@ var
 begin
   BitMap := TBitmap.Create;
   try
-    BitMap.LoadFromFile('Images\fon.bmp'); // ”кажите путь к изображению фона
-    Canvas.Draw(XImage, YImage, BitMap); // –исуем фон
+    BitMap.LoadFromFile('D:/bsuir/sem2/oaip/lab2/OAiP_graphics/Cartoon/c/Win32/Debug/Images/fon.bmp'); // ”кажите путь к изображению фона
+    //Canvas.Draw(XImage, YImage, BitMap); // –исуем фон
   finally
     BitMap.Free;
   end;
