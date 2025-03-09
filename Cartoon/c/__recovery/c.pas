@@ -89,7 +89,7 @@ end;
 
 procedure TMyCanvas.DrawCharacter(X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
 RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer);
-var X2, Y2: integer;
+var X2, Y2, downBodyX, downBodyY: integer;
 begin
   RBody := RBody mod 360;
 
@@ -107,19 +107,18 @@ begin
 
   // туловище
   Form1.Canvas.MoveTo(X, Y);
-
-  Form1.Canvas.LineTo(X + scale * 4 * round(sin(toRad(RBody))),
-  Y + scale * 4 * round(cos(toRad(RBody)))); // конец тулова
+  downBodyX := X + scale * 4 * round(sin(toRad(RBody)));
+  downBodyY := Y + scale * 4 * round(cos(toRad(RBody)));
+  Form1.Canvas.LineTo(downBodyX, downBodyY); // конец тулова
 
   // голова
-  //X - scale/2, Y - scale, X + scale/2, Y
   Form1.Canvas.Ellipse(X - round(scale * sin(toRad(RBody))) - scale,
                        Y - round(scale * cos(toRad(RBody))) - scale,
                        X - round(scale * sin(toRad(RBody))) + scale,
                        Y - round(scale * cos(toRad(RBody))) + scale);
 
-//
-//  // левая рука
+
+// левая рука
   X2 := X + round(scale * 3 * sin(toRad(RLeftH)));
   Y2 := Y + round(scale * 3 * cos(toRad(RLeftH)));
   Form1.Canvas.Polyline([
@@ -128,8 +127,8 @@ begin
     Point(X2 + round(scale * 2 * sin(toRad(RLeftH2))),
           Y2 + round(scale * 2 * cos(toRad(RLeftH2))))
     ]);
-//
-//  // правая рука
+
+// правая рука
 
   X2 := X + round(scale * 3 * sin(toRad(RRIghtH)));
   Y2 := Y + round(scale * 3 * cos(toRad(RRIghtH)));
@@ -140,15 +139,25 @@ begin
           Y2 + round(scale * 2 * cos(toRad(RRIghtH2))))
     ]);
 
-//  // левая нога
-//  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
-//    Point(LeftLeg1X * Xpr + X, LeftLeg1Y * Ypr + Y), Point(LeftLeg2X * Xpr + X,
-//    LeftLeg2Y * Ypr + Y)]);
-//
-//  // правая нога
-//  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
-//    Point(RightLeg1X * Xpr + X, RightLeg1Y * Ypr + Y),
-//    Point(RightLeg2X * Xpr + X, RightLeg2Y * Ypr + Y)]);
+// левая нога
+  X2 := downBodyX + round(scale * 3 * sin(toRad(RLeftLeg)));
+  Y2 := downBodyY + round(scale * 3 * cos(toRad(RLeftLeg)));
+  Form1.Canvas.Polyline([
+    Point(downBodyX, downBodyY),
+    Point(X2, Y2),
+    Point(X2 + round(scale * 2 * sin(toRad(RLeftLeg2))),
+          Y2 + round(scale * 2 * cos(toRad(RLeftLeg2))))
+  ]);
+
+// правая нога
+  X2 := downBodyX + round(scale * 3 * sin(toRad(RRightLeg)));
+  Y2 := downBodyY + round(scale * 3 * cos(toRad(RRightLeg)));
+  Form1.Canvas.Polyline([
+    Point(downBodyX, downBodyY),
+    Point(X2, Y2),
+    Point(X2 + round(scale * 2 * sin(toRad(RRightLeg2))),
+          Y2 + round(scale * 2 * cos(toRad(RRightLeg2))))
+  ]);
 end;
 
 procedure TForm1.DrawBackground;
@@ -177,7 +186,7 @@ end;
 }
 var frames: array[1..CNT_FRAMES] of array[1..12] of integer =
   (
-        (500, 500, 50, 0, 315, 0, 45, 0, 9, 10, 11, 12),
+        (500, 500, 50, 0, 315, 0, 45, 0, 340, 0, 20, 0),
 
         (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12),
 
