@@ -2,8 +2,8 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 762
-  ClientWidth = 1266
+  ClientHeight = 751
+  ClientWidth = 1271
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -28,6 +28,16 @@ object Form1: TForm1
     Caption = 'Button2'
     TabOrder = 1
     OnClick = Button2Click
+  end
+  object MediaPlayer1: TMediaPlayer
+    Left = 1016
+    Top = 8
+    Width = 253
+    Height = 30
+    DoubleBuffered = True
+    Visible = False
+    ParentDoubleBuffered = False
+    TabOrder = 2
   end
   object Timer1: TTimer
     Enabled = False
