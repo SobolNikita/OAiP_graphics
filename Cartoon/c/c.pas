@@ -35,7 +35,7 @@ type
 
   TMyCanvas = class(TCanvas)
     procedure DrawCharacter(X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
-RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick: integer);
+RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick, scaleStick: integer);
   end;
 
 const CNT_RUN_FRAMES = 11;
@@ -57,7 +57,7 @@ begin
 end;
 
 procedure TMyCanvas.DrawCharacter(X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
-RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick: integer);
+RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick, scaleStick: integer);
 var X2, Y2, downBodyX, downBodyY, LeftArmX, LeftArmY: integer;
 begin
   RBody := RBody mod 360;
@@ -100,11 +100,11 @@ begin
 
     // палка
     Form1.Canvas.MoveTo(LeftArmX, LeftArmY);
-  Form1.Canvas.LineTo(LeftArmX - round(scale * 8 * sin(toRad(RStick))),
-                      LeftArmY - round(scale * 8 * cos(toRad(RStick))));
+  Form1.Canvas.LineTo(LeftArmX - round(scaleStick * scale * 8 * sin(toRad(RStick))),
+                      LeftArmY - round(scaleStick * scale * 8 * cos(toRad(RStick))));
   Form1.Canvas.MoveTo(LeftArmX, LeftArmY);
-  Form1.Canvas.LineTo(LeftArmX + round(scale * 4 * sin(toRad(RStick))),
-                      LeftArmY + round(scale * 4 * cos(toRad(RStick))));
+  Form1.Canvas.LineTo(LeftArmX + round(scaleStick * scale * 4 * sin(toRad(RStick))),
+                      LeftArmY + round(scaleStick * scale * 4 * cos(toRad(RStick))));
 
 // правая рука
 
@@ -141,11 +141,16 @@ end;
 procedure TForm1.DrawBackground;
 var
   BitMap: TBitmap;
+  DestRect: TRect;
+  scale: real;
 begin
+  scale := 1;
   BitMap := TBitmap.Create;
   try
     BitMap.LoadFromFile('Images/fon.bmp'); // Укажите путь к изображению фона
-    Canvas.Draw(XImage, YImage, BitMap); // Рисуем фон
+    DestRect := Rect(-1700, 0, Round(BitMap.Width * Scale), Round(BitMap.Height * Scale));
+    Canvas.StretchDraw(DestRect, BitMap);
+    //Canvas.Draw(XImage, YImage, BitMap); // Рисуем фон
   finally
     BitMap.Free;
   end;
@@ -154,7 +159,7 @@ end;
 procedure drawPerson(var a: array of integer);
 begin
   MC.DrawCharacter(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9],
-   a[10], a[11], a[12]);
+   a[10], a[11], a[12], a[13]);
 end;
 
 
@@ -162,70 +167,77 @@ end;
   X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
   RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
 }
-var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES] of array[1..13] of integer =
+var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES] of array[1..14] of integer =
   (
         //run
 
-        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
+        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45, 1),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40, 1),
 
-        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25),
+        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25, 1),
 
-       (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
+       (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45, 1),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40, 1),
 
-        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25),
+        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25, 1),
 
-         (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
+         (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45, 1),
 
-         (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
+         (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40, 1),
 
-        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
+        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45, 1),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40, 1),
 
-        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25),
+        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25, 1),
 
         //jump
 
-        (500, 500, 50, 10, 45, 190, 50, 135, 45, 270, 50, 0, 0),
+        (500, 500, 50, 5, 110, 190, 150, 205, 10, 270, 25, 0, 52, 1),
 
-        (500, 500, 50, 10, 170, 180, 135, 145, 315, 305, 55, 350, 0),
+        (500, 500, 60, 10, 170, 180, 135, 145, 335, 305, 55, 350, 246, 1),
 
-        (500, 500, 50, 0, 180, 180, 135, 145, 340, 250, 30, 25, 0),
+        (500, 500, 70, 0, 180, 180, 135, 145, 340, 250, 30, 25, 249, 1),
 
-        (500, 500, 50, 340, 200, 210, 135, 190, 340, 330, 30, 320, 0),
+        (500, 500, 70, 340, 200, 210, 90, 193, 340, 330, 30, 320, 240, 1),
 
-        (500, 500, 50, 20, 315, 320, 170, 190, 0, 340, 50, 350, 0),
+        (500, 500, 80, 20, 215, 230, 170, 190, 0, 340, 50, 350, 289, 1),
 
-        (500, 500, 50, 40, 215, 215, 165, 190, 30, 25, 120, 55, 0),
+        (500, 500, 80, 40, 215, 215, 165, 190, 30, 25, 120, 55, 283, 1),
 
-        (500, 500, 50, 50, 215, 210, 185, 190, 135, 85, 95, 90, 0),
+        (500, 500, 90, 50, 215, 210, 185, 190, 135, 85, 95, 90, 289, 1),
 
-        (500, 500, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 0),
+        (500, 500, 90, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
 
-        (500, 500, 50, 181, 315, 45, 45, 315, 175, 180, 205, 190, 0),
+        (500, 500, 80, 181, 328, 45, 25, 315, 175, 180, 205, 190, 0, 0),
 
-        (500, 500, 50, 160, 10, 310, 15, 315, 135, 140, 145, 150, 0),
+        (500, 500, 80, 160, 10, 310, 15, 315, 135, 140, 145, 150, 0, 0),
 
-        (500, 500, 50, 150, 80, 0, 340, 315, 100, 115, 115, 130, 0),
+        (500, 500, 70, 150, 80, 0, 340, 315, 100, 115, 115, 130, 0, 0),
 
-        (500, 500, 50, 30, 270, 315, 315, 320, 45, 100, 60, 100, 0),
+        (500, 500, 70, 30, 270, 315, 315, 320, 45, 100, 60, 100, 0, 0),
 
-        (500, 500, 50, 350, 170, 140, 90, 135, 340, 110, 20, 100, 0),
+        (500, 500, 60, 350, 170, 140, 90, 135, 340, 110, 20, 100, 0, 0),
 
-        (500, 500, 50, 305, 170, 140, 90, 135, 320, 50, 340, 50, 0),
+        (500, 500, 60, 305, 170, 140, 90, 135, 320, 50, 340, 50, 0, 0),
 
-        (500, 500, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0)
+        (500, 500, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0)
 );
+
 
 procedure TForm1.DrawCharacter;
 begin
-  if FrameIndex >= 25 then
+  if FrameIndex >= 36 then
   begin
-    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-25) mod CNT_JUMP_FRAMES + 1)]);
+    drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES]);
+    XImage := XImage + 3;
+  end
+  else if FrameIndex >= 21 then
+  begin
+    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-21) mod CNT_JUMP_FRAMES + 1)]);
+    XImage := XImage - 3;
   end
   else
   begin
@@ -244,7 +256,7 @@ end;
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  drawPerson(frames[12]); // номер проверяемого кадра
+  drawPerson(frames[22]); // номер проверяемого кадра
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
