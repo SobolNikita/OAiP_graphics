@@ -38,7 +38,8 @@ type
 RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer);
   end;
 
-const CNT_FRAMES = 11;
+const CNT_RUN_FRAMES = 11;
+      CNT_JUMP_FRAMES = 15;
 
 var
   Form1: TForm1;
@@ -184,8 +185,18 @@ end;
   X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
   RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
 }
-var frames: array[1..CNT_FRAMES] of array[1..12] of integer =
+var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES] of array[1..12] of integer =
   (
+        //run
+
+        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10),
+
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+
+        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270),
+
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+
         (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10),
 
         (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
@@ -198,20 +209,51 @@ var frames: array[1..CNT_FRAMES] of array[1..12] of integer =
 
         (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270),
 
-        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10),
-
         (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
 
-        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10),
+        //jump
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+        (500, 500, 50, 10, 45, 190, 50, 135, 45, 270, 50, 0),
 
-        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270)
+        (500, 500, 50, 10, 170, 180, 135, 145, 315, 305, 55, 350),
+
+        (500, 500, 50, 0, 180, 180, 135, 145, 340, 250, 30, 25),
+
+        (500, 500, 50, 340, 200, 210, 135, 190, 340, 330, 30, 320),
+
+        (500, 500, 50, 20, 315, 320, 170, 190, 0, 340, 50, 350),
+
+        (500, 500, 50, 40, 215, 215, 165, 190, 30, 25, 120, 55),
+
+        (500, 500, 50, 50, 215, 210, 185, 190, 135, 85, 95, 90),
+
+        (500, 500, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185),
+
+        (500, 500, 50, 181, 315, 45, 45, 315, 175, 180, 205, 190),
+
+        (500, 500, 50, 160, 10, 310, 15, 315, 135, 140, 145, 150),
+
+        (500, 500, 50, 150, 80, 0, 340, 315, 100, 115, 115, 130),
+
+        (500, 500, 50, 30, 270, 315, 315, 320, 45, 100, 60, 100),
+
+        (500, 500, 50, 350, 170, 140, 90, 135, 340, 110, 20, 100),
+
+        (500, 500, 50, 305, 170, 140, 90, 135, 320, 50, 340, 50),
+
+        (500, 500, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245)
 );
 
 procedure TForm1.DrawCharacter;
 begin
-  drawPerson(frames[FrameIndex]);
+  if FrameIndex >= 25 then
+  begin
+    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-25) mod CNT_JUMP_FRAMES + 1)]);
+  end
+  else
+  begin
+    drawPerson(frames[FrameIndex mod CNT_RUN_FRAMES + 1]);
+  end;
 end;
 
 procedure TForm1.DrawFrame;
@@ -225,7 +267,7 @@ end;
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  drawPerson(frames[2]);
+  drawPerson(frames[12]); // номер проверяемого кадра
 //  Form1.Canvas.Ellipse(470, 400, 570, 300); // голова
 //  Form1.Canvas.MoveTo(520, 400); // от головы
 //  Form1.Canvas.LineTo(520, 610); // конец тулова
@@ -269,7 +311,8 @@ end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
-  FrameIndex := FrameIndex mod CNT_FRAMES + 1; // Переход к следующему кадру
+  FrameIndex := FrameIndex + 1; // Переход к следующему кадру
+
   X := X + 1;
   if (X >= ClientWidth - 20) then
     Timer1.Enabled := false;
@@ -279,7 +322,7 @@ procedure TForm1.Timer2Timer(Sender: TObject);
 begin
   DrawFrame; // Рисуем текущий кадр
   // Обновляем позицию фона
-  XImage := XImage - 1; // Двигаем фон влево
+  XImage := XImage - 3; // Двигаем фон влево
 end;
 
 end.
