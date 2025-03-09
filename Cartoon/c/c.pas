@@ -35,7 +35,7 @@ type
 
   TMyCanvas = class(TCanvas)
     procedure DrawCharacter(X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
-RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer);
+RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick: integer);
   end;
 
 const CNT_RUN_FRAMES = 11;
@@ -50,38 +50,6 @@ implementation
 
 {$R *.dfm}
 
-//procedure TMyCanvas.DrawCharacter(X, Y, Xpr, Ypr, LeftArm1X, LeftArm1Y,
-//  LeftArm2X, LeftArm2Y, RightArm1X, RightArm1Y, RightArm2X, RightArm2Y,
-//  LeftLeg1X, LeftLeg1Y, LeftLeg2X, LeftLeg2Y, RightLeg1X, RightLeg1Y,
-//  RightLeg2X, RightLeg2Y: integer);
-//begin
-  // голова
-  //Form1.Canvas.Ellipse(47 * Xpr + X, 40 * Ypr + Y, 57 * Xpr + X, 30 * Ypr + Y);
-
-  // туловище
-//  Form1.Canvas.MoveTo(52 * Xpr + X, 40 * Ypr + Y);
-//  Form1.Canvas.LineTo(52 * Xpr + X, 62 * Ypr + Y); // конец тулова
-//
-//  // левая рука
-//  Form1.Canvas.Polyline([Point(52 * Xpr + X, 45 * Ypr + Y),
-//    Point(LeftArm1X * Xpr + X, LeftArm1Y * Ypr + Y), Point(LeftArm2X * Xpr + X,
-//    LeftArm2Y * Ypr + Y)]);
-//
-//  // правая рука
-//  Form1.Canvas.Polyline([Point(52 * Xpr + X, 45 * Ypr + Y),
-//    Point(RightArm1X * Xpr + X, RightArm1Y * Ypr + Y),
-//    Point(RightArm2X * Xpr + X, RightArm2Y * Ypr + Y)]);
-//
-//  // левая нога
-//  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
-//    Point(LeftLeg1X * Xpr + X, LeftLeg1Y * Ypr + Y), Point(LeftLeg2X * Xpr + X,
-//    LeftLeg2Y * Ypr + Y)]);
-//
-//  // правая нога
-//  Form1.Canvas.Polyline([Point(52 * Xpr + X, 62 * Ypr + Y),
-//    Point(RightLeg1X * Xpr + X, RightLeg1Y * Ypr + Y),
-//    Point(RightLeg2X * Xpr + X, RightLeg2Y * Ypr + Y)]);
-//end;
 
 function toRad(const val: integer): real;
 begin
@@ -89,8 +57,8 @@ begin
 end;
 
 procedure TMyCanvas.DrawCharacter(X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
-RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer);
-var X2, Y2, downBodyX, downBodyY: integer;
+RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick: integer);
+var X2, Y2, downBodyX, downBodyY, LeftArmX, LeftArmY: integer;
 begin
   RBody := RBody mod 360;
 
@@ -122,12 +90,21 @@ begin
 // левая рука
   X2 := X + round(scale * 3 * sin(toRad(RLeftH)));
   Y2 := Y + round(scale * 3 * cos(toRad(RLeftH)));
+  LeftArmX := X2 + round(scale * 2 * sin(toRad(RLeftH2)));
+ LeftArmY := Y2 + round(scale * 2 * cos(toRad(RLeftH2)));
   Form1.Canvas.Polyline([
     Point(X, Y),
     Point(X2, Y2),
-    Point(X2 + round(scale * 2 * sin(toRad(RLeftH2))),
-          Y2 + round(scale * 2 * cos(toRad(RLeftH2))))
-    ]);
+    Point(LeftArmX, LeftArmY)]);
+
+
+    // палка
+    Form1.Canvas.MoveTo(LeftArmX, LeftArmY);
+  Form1.Canvas.LineTo(LeftArmX - round(scale * 8 * sin(toRad(RStick))),
+                      LeftArmY - round(scale * 8 * cos(toRad(RStick))));
+  Form1.Canvas.MoveTo(LeftArmX, LeftArmY);
+  Form1.Canvas.LineTo(LeftArmX + round(scale * 4 * sin(toRad(RStick))),
+                      LeftArmY + round(scale * 4 * cos(toRad(RStick))));
 
 // правая рука
 
@@ -177,7 +154,7 @@ end;
 procedure drawPerson(var a: array of integer);
 begin
   MC.DrawCharacter(a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9],
-   a[10], a[11]);
+   a[10], a[11], a[12]);
 end;
 
 
@@ -185,63 +162,63 @@ end;
   X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
   RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
 }
-var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES] of array[1..12] of integer =
+var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES] of array[1..13] of integer =
   (
         //run
 
-        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10),
+        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
 
-        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270),
+        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+       (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
 
-        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10),
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25),
 
-        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270),
+         (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
 
-        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10),
+         (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+        (500, 500, 50, 350, 280, 45, 35, 135, 340, 300, 60, 10, -45),
 
-        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270),
+        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350, -40),
 
-        (500, 500, 50, 350, 300, 60, 20, 120, 355, 270, 20, 350),
+        (500, 500, 50, 350, 340, 45, 355, 45, 355, 0, 20, 270, -25),
 
         //jump
 
-        (500, 500, 50, 10, 45, 190, 50, 135, 45, 270, 50, 0),
+        (500, 500, 50, 10, 45, 190, 50, 135, 45, 270, 50, 0, 0),
 
-        (500, 500, 50, 10, 170, 180, 135, 145, 315, 305, 55, 350),
+        (500, 500, 50, 10, 170, 180, 135, 145, 315, 305, 55, 350, 0),
 
-        (500, 500, 50, 0, 180, 180, 135, 145, 340, 250, 30, 25),
+        (500, 500, 50, 0, 180, 180, 135, 145, 340, 250, 30, 25, 0),
 
-        (500, 500, 50, 340, 200, 210, 135, 190, 340, 330, 30, 320),
+        (500, 500, 50, 340, 200, 210, 135, 190, 340, 330, 30, 320, 0),
 
-        (500, 500, 50, 20, 315, 320, 170, 190, 0, 340, 50, 350),
+        (500, 500, 50, 20, 315, 320, 170, 190, 0, 340, 50, 350, 0),
 
-        (500, 500, 50, 40, 215, 215, 165, 190, 30, 25, 120, 55),
+        (500, 500, 50, 40, 215, 215, 165, 190, 30, 25, 120, 55, 0),
 
-        (500, 500, 50, 50, 215, 210, 185, 190, 135, 85, 95, 90),
+        (500, 500, 50, 50, 215, 210, 185, 190, 135, 85, 95, 90, 0),
 
-        (500, 500, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185),
+        (500, 500, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 0),
 
-        (500, 500, 50, 181, 315, 45, 45, 315, 175, 180, 205, 190),
+        (500, 500, 50, 181, 315, 45, 45, 315, 175, 180, 205, 190, 0),
 
-        (500, 500, 50, 160, 10, 310, 15, 315, 135, 140, 145, 150),
+        (500, 500, 50, 160, 10, 310, 15, 315, 135, 140, 145, 150, 0),
 
-        (500, 500, 50, 150, 80, 0, 340, 315, 100, 115, 115, 130),
+        (500, 500, 50, 150, 80, 0, 340, 315, 100, 115, 115, 130, 0),
 
-        (500, 500, 50, 30, 270, 315, 315, 320, 45, 100, 60, 100),
+        (500, 500, 50, 30, 270, 315, 315, 320, 45, 100, 60, 100, 0),
 
-        (500, 500, 50, 350, 170, 140, 90, 135, 340, 110, 20, 100),
+        (500, 500, 50, 350, 170, 140, 90, 135, 340, 110, 20, 100, 0),
 
-        (500, 500, 50, 305, 170, 140, 90, 135, 320, 50, 340, 50),
+        (500, 500, 50, 305, 170, 140, 90, 135, 320, 50, 340, 50, 0),
 
-        (500, 500, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245)
+        (500, 500, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0)
 );
 
 procedure TForm1.DrawCharacter;
@@ -268,19 +245,6 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 begin
   drawPerson(frames[12]); // номер проверяемого кадра
-//  Form1.Canvas.Ellipse(470, 400, 570, 300); // голова
-//  Form1.Canvas.MoveTo(520, 400); // от головы
-//  Form1.Canvas.LineTo(520, 610); // конец тулова
-//  Form1.Canvas.Polyline([Point(520, 450), Point(480, 500), Point(470, 460)]);
-//  // левая рука
-//  Form1.Canvas.Polyline([Point(520, 450), Point(540, 500), Point(570, 460)]);
-//  // правая рука
-//  Form1.Canvas.Polyline([Point(520, 610), Point(530, 700), Point(500, 750)]);
-//  // правая нога
-//  Form1.Canvas.Polyline([Point(520, 610), Point(570, 690), Point(560, 730)]);
-//  // левая нога
-//  Form1.Canvas.Polyline([Point(510, 490), Point(410, 630)]); // палка
-//  Form1.Canvas.Polyline([Point(510, 490), Point(650, 320)]); // палка
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
