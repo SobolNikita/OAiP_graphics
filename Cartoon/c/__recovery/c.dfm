@@ -2,15 +2,14 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 762
-  ClientWidth = 1266
+  ClientHeight = 751
+  ClientWidth = 1271
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OnCreate = FormCreate
   TextHeight = 15
   object Button1: TButton
     Left = 8
@@ -36,9 +35,9 @@ object Form1: TForm1
     Width = 253
     Height = 30
     DoubleBuffered = True
+    Visible = False
     ParentDoubleBuffered = False
     TabOrder = 2
-    OnClick = MediaPlayer1Click
   end
   object Timer1: TTimer
     Enabled = False

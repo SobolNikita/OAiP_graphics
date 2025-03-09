@@ -22,9 +22,6 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
-    procedure MediaPlayer1Click(Sender: TObject; Button: TMPBtnType;
-      var DoDefault: Boolean);
   private
     { Private declarations }
     FrameIndex: integer; // Индекс текущего кадра
@@ -42,6 +39,8 @@ type
       LeftLeg1Y, LeftLeg2X, LeftLeg2Y, RightLeg1X, RightLeg1Y, RightLeg2X,
       RightLeg2Y: integer);
   end;
+
+const CNT_FRAMES = 7;
 
 var
   Form1: TForm1;
@@ -98,18 +97,45 @@ begin
   end;
 end;
 
+procedure drawPerson(var a: array of integer);
+begin
+  MC.DrawCharacter(a[0] + X, a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8], a[9],
+   a[10], a[11], a[12], a[13], a[14], a[15], a[16], a[17], a[18], a[19]);
+end;
+
+
+{
+  X, Y, Xpr, Ypr, LeftArm1X, LeftArm1Y,
+  LeftArm2X, LeftArm2Y, RightArm1X, RightArm1Y, RightArm2X, RightArm2Y,
+  LeftLeg1X, LeftLeg1Y, LeftLeg2X, LeftLeg2Y, RightLeg1X, RightLeg1Y,
+  RightLeg2X, RightLeg2Y
+}
+var frames: array[1..CNT_FRAMES] of array[1..20] of integer =
+  ((100, 100, 10, 10, 45, 49, 50, 52, 56, 50, 62, 47, 48,
+        70, 43, 73, 57, 69, 57, 74),
+
+        (100, 100, 10, 10, 45, 51, 50, 50, 54, 51, 60, 46, 51,
+        67, 46, 73, 56, 68, 56, 74),
+
+         (100, 100, 10, 10, 45, 50, 50, 51, 54, 50, 59, 45, 51,
+        69, 50, 74, 56, 69, 48, 70),
+
+        (100, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
+        70, 50, 75, 57, 69, 56, 73),
+
+        (100, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
+        70, 50, 75, 57, 69, 56, 73),
+
+        (100, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
+        70, 50, 75, 57, 69, 56, 73),
+
+        (100, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
+        70, 50, 75, 57, 69, 56, 73)
+        );
+
 procedure TForm1.DrawCharacter;
 begin
-  case FrameIndex of
-    1: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 49, 50, 52, 56, 50, 62, 47, 48,
-        70, 43, 73, 57, 69, 57, 74);
-    2: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 51, 50, 50, 54, 51, 60, 46, 51,
-        67, 46, 73, 56, 68, 56, 74);
-    3: MC.DrawCharacter(100 + X, 100, 10, 10, 45, 50, 50, 51, 54, 50, 59, 45, 51,
-        69, 50, 74, 56, 69, 48, 70);
-    4: MC.DrawCharacter(100 + X, 100, 10, 10, 47, 51, 51, 49, 54, 50, 57, 46, 53,
-        70, 50, 75, 57, 69, 56, 73);
-  end;
+  drawPerson(frames[FrameIndex]);
 end;
 
 procedure TForm1.DrawFrame;
@@ -140,6 +166,13 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
+
+  //Музыка
+  MediaPlayer1.FileName := 'music/fon_music.mp3';
+  MediaPlayer1.Open;
+  MediaPlayer1.Play;
+  //Музыка
+
   XImage := 0; // Инициализация позиции фона
   YImage := 0; // Инициализация позиции фона
   Timer2.Enabled := True;
@@ -150,13 +183,6 @@ begin
   Timer1.Enabled := True; // Запускаем таймер
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
-begin
-  MediaPlayer1.FileName := 'media/music.mp3';
-  MediaPlayer1.Open;
-  MediaPlayer1.Play;
-end;
-
 procedure TForm1.FormPaint(Sender: TObject);
 begin
   Canvas.Brush.Color := clWhite;
@@ -164,15 +190,9 @@ begin
   Canvas.Pen.Mode := pmNotXor;
 end;
 
-procedure TForm1.MediaPlayer1Click(Sender: TObject; Button: TMPBtnType;
-  var DoDefault: Boolean);
-begin
-
-end;
-
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
-  FrameIndex := FrameIndex mod 4 + 1; // Переход к следующему кадру
+  FrameIndex := FrameIndex mod CNT_FRAMES + 1; // Переход к следующему кадру
   X := X + 1;
   if (X >= ClientWidth - 20) then
     Timer1.Enabled := false;
