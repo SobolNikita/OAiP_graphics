@@ -40,12 +40,19 @@ RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick, scaleStick: integer);
 
 const CNT_RUN_FRAMES = 11;
       CNT_JUMP_FRAMES = 15;
+      CNT_HIT_FRAMES = 1;
+      LAST_RUN_FRAME = 28;
 
 var
   Form1: TForm1;
   X, Y: integer;
   MC: TMyCanvas;
-
+  bgScales: array[1..CNT_JUMP_FRAMES] of real = (
+    1, 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.25, 1.2, 1.15, 1.1, 1.05, 1, 1
+  );
+  Y_JUMP_POS: array[1..CNT_JUMP_FRAMES] of integer = (
+    -3000, -2800, -2700, -2400, -2100, -2000, -2100, -2400, -2400, -2500, -2600, -2700, -2800, -2900, -3000
+  );
 implementation
 
 {$R *.dfm}
@@ -144,11 +151,22 @@ var
   DestRect: TRect;
   scale: real;
 begin
+
   scale := 1;
+
+  if (FrameIndex >= LAST_RUN_FRAME) and (FrameIndex < LAST_RUN_FRAME + 15) then
+  begin
+    scale := bgScales[((FrameIndex-LAST_RUN_FRAME) mod CNT_JUMP_FRAMES + 1)];
+    if FrameIndex >= LAST_RUN_FRAME + 4 then
+      XImage := XImage - 15;
+      YImage := Y_JUMP_POS[((FrameIndex-LAST_RUN_FRAME) mod CNT_JUMP_FRAMES + 1)];
+  end;
+
+
   BitMap := TBitmap.Create;
   try
     BitMap.LoadFromFile('Images/fon.bmp'); // Укажите путь к изображению фона
-    DestRect := Rect(-1700, 0, Round(BitMap.Width * Scale), Round(BitMap.Height * Scale));
+    DestRect := Rect(XImage, YImage, Round(BitMap.Width * Scale), Round(BitMap.Height * Scale));
     Canvas.StretchDraw(DestRect, BitMap);
     //Canvas.Draw(XImage, YImage, BitMap); // Рисуем фон
   finally
@@ -167,7 +185,7 @@ end;
   X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
   RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
 }
-var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES] of array[1..14] of integer =
+var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array[1..14] of integer =
   (
         //run
 
@@ -197,47 +215,53 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES] of array[1..14] of intege
 
         (500, 500, 50, 5, 110, 190, 150, 205, 10, 270, 25, 0, 52, 1),
 
-        (500, 500, 60, 10, 170, 180, 135, 145, 335, 305, 55, 350, 246, 1),
+        (500, 450, 55, 10, 170, 180, 135, 145, 335, 305, 55, 350, 246, 1),
 
-        (500, 500, 70, 0, 180, 180, 135, 145, 340, 250, 30, 25, 249, 1),
+        (500, 450, 60, 0, 180, 180, 135, 145, 340, 250, 30, 25, 249, 1),
 
-        (500, 500, 70, 340, 200, 210, 90, 193, 340, 330, 30, 320, 240, 1),
+        (500, 400, 60, 340, 200, 210, 90, 193, 340, 330, 30, 320, 240, 1),
 
-        (500, 500, 80, 20, 215, 230, 170, 190, 0, 340, 50, 350, 289, 1),
+        (500, 400, 65, 20, 215, 230, 170, 190, 0, 340, 50, 350, 289, 1),
 
-        (500, 500, 80, 40, 215, 215, 165, 190, 30, 25, 120, 55, 283, 1),
+        (500, 350, 65, 40, 215, 215, 165, 190, 30, 25, 120, 55, 283, 1),
 
-        (500, 500, 90, 50, 215, 210, 185, 190, 135, 85, 95, 90, 289, 1),
+        (500, 350, 70, 50, 215, 210, 185, 190, 135, 85, 95, 90, 289, 1),
 
-        (500, 500, 90, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 350, 70, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
 
-        (500, 500, 80, 181, 328, 45, 25, 315, 175, 180, 205, 190, 0, 0),
+        (500, 350, 65, 181, 328, 45, 25, 315, 175, 180, 205, 190, 0, 0),
 
-        (500, 500, 80, 160, 10, 310, 15, 315, 135, 140, 145, 150, 0, 0),
+        (500, 400, 65, 160, 10, 310, 15, 315, 135, 140, 145, 150, 0, 0),
 
-        (500, 500, 70, 150, 80, 0, 340, 315, 100, 115, 115, 130, 0, 0),
+        (500, 400, 60, 150, 80, 0, 340, 315, 100, 115, 115, 130, 0, 0),
 
-        (500, 500, 70, 30, 270, 315, 315, 320, 45, 100, 60, 100, 0, 0),
+        (500, 450, 60, 30, 270, 315, 315, 320, 45, 100, 60, 100, 0, 0),
 
-        (500, 500, 60, 350, 170, 140, 90, 135, 340, 110, 20, 100, 0, 0),
+        (500, 450, 55, 350, 170, 140, 90, 135, 340, 110, 20, 100, 0, 0),
 
-        (500, 500, 60, 305, 170, 140, 90, 135, 320, 50, 340, 50, 0, 0),
+        (500, 600, 55, 305, 170, 140, 90, 135, 320, 50, 340, 50, 0, 0),
 
-        (500, 500, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0)
+        (500, 800, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0),
+
+
+        //hit
+
+        (500, 800, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0)
+
 );
 
 
 procedure TForm1.DrawCharacter;
 begin
-  if FrameIndex >= 36 then
+  if FrameIndex >= LAST_RUN_FRAME + 15 then
   begin
     drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES]);
-    XImage := XImage + 3;
+    XImage := XImage + 8;
   end
-  else if FrameIndex >= 21 then
+  else if FrameIndex >= LAST_RUN_FRAME then
   begin
-    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-21) mod CNT_JUMP_FRAMES + 1)]);
-    XImage := XImage - 3;
+    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-LAST_RUN_FRAME) mod CNT_JUMP_FRAMES + 1)]);
+    XImage := XImage - 15;
   end
   else
   begin
@@ -256,7 +280,7 @@ end;
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  drawPerson(frames[22]); // номер проверяемого кадра
+  drawPerson(frames[1]); // номер проверяемого кадра
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -269,7 +293,7 @@ begin
   //Музыка
 
   XImage := 0; // Инициализация позиции фона
-  YImage := 0; // Инициализация позиции фона
+  YImage := -3000; // Инициализация позиции фона
   Timer2.Enabled := True;
 
   X := 100;
@@ -298,7 +322,7 @@ procedure TForm1.Timer2Timer(Sender: TObject);
 begin
   DrawFrame; // Рисуем текущий кадр
   // Обновляем позицию фона
-  XImage := XImage - 3; // Двигаем фон влево
+  XImage := XImage - 8; // Двигаем фон влево
 end;
 
 end.
