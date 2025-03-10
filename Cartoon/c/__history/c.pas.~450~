@@ -38,7 +38,7 @@ RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick, scaleStick: integer);
 
 const CNT_RUN_FRAMES = 11;
       CNT_JUMP_FRAMES = 15;
-      CNT_HIT_FRAMES = 9;
+      CNT_HIT_FRAMES = 11;
       LAST_RUN_FRAME = 28;
 
 var
@@ -254,6 +254,10 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array
 
         (500, 500, 50, 0,  320, 10, 40,  140, 330, 10, 40, 10, 350, 1),
 
+        (500, 500, 50, 0,  320, 70, 40,  150, 340, 350, 30, 10, 350, 1),
+
+        (500, 500, 50, 0,  320, 10, 40,  140, 330, 10, 40, 10, 350, 1),
+
          (500, 500, 50, 0,  320, 70, 40,  150, 340, 350, 30, 10, 350, 2),
 
         (500, 500, 50, 0,  320, 110, 40,  110, 355, 340, 30, 10, 340, 2)
@@ -263,21 +267,34 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array
 
 procedure TForm1.DrawCharacter;
 begin
+ if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 13 then
+      begin
+  //бег первый
+    frames[FrameIndex mod CNT_RUN_FRAMES + 1, 14] := 2;
+    drawPerson(frames[FrameIndex mod CNT_RUN_FRAMES + 1]);
+    X := X + 15;
+  end
+  else
   if FrameIndex >= LAST_RUN_FRAME + 15 then
   begin
-    drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES]);
+  //Ќ≈“ ”¬≈Ћ»„≈Ќ»я,  Ќ≈≈ + 1
+   drawPerson(frames[CNT_RUN_FRAMES +CNT_JUMP_FRAMES+ ((FrameIndex-LAST_RUN_FRAME) mod CNT_HIT_FRAMES  )]);
+  //  drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES]);
     XImage := XImage + 8;
   end
   else if FrameIndex >= LAST_RUN_FRAME then
   begin
+  //прыжок
     drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-LAST_RUN_FRAME) mod CNT_JUMP_FRAMES + 1)]);
     XImage := XImage - 15;
   end
   else
   begin
+  //бег первый
     drawPerson(frames[FrameIndex mod CNT_RUN_FRAMES + 1]);
   end;
 end;
+
 
 procedure TForm1.DrawFrame;
 begin
