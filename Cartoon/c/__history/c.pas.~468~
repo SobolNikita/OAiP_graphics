@@ -40,6 +40,7 @@ const CNT_RUN_FRAMES = 11;
       CNT_JUMP_FRAMES = 15;
       CNT_HIT_FRAMES = 11;
       LAST_RUN_FRAME = 28;
+      CNT_STAND_FRAMES = 1;
 
 var
   Form1: TForm1;
@@ -180,7 +181,7 @@ end;
   X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
   RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
 }
-var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array[1..14] of integer =
+var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_STAND_FRAMES] of array[1..14] of integer =
   (
         //run
 
@@ -260,6 +261,8 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array
 
          (500, 500, 50, 0,  320, 70, 40,  150, 340, 350, 30, 10, 350, 2),
 
+        (500, 500, 50, 0,  320, 110, 40,  110, 355, 340, 30, 10, 340, 2),
+
         (500, 500, 50, 0,  320, 110, 40,  110, 355, 340, 30, 10, 340, 2)
 
 );
@@ -267,10 +270,23 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array
 
 procedure TForm1.DrawCharacter;
 begin
- if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 13 then
+if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 100 then
+begin
+ drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-LAST_RUN_FRAME) )]);
+   FRAMEINDEX := 0;
+end
+else if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 70 then
+begin
+  //прыжок второй
+    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-LAST_RUN_FRAME + 1) mod CNT_JUMP_FRAMES + 1 )]);
+    XImage := XImage - 15;
+  end
+else if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 13 then
       begin
-  //бег первый
+  //бег второй
+    frames[FrameIndex mod CNT_RUN_FRAMES + 1, 14] := 2;
     drawPerson(frames[FrameIndex mod CNT_RUN_FRAMES + 1]);
+    XImage := XImage - 25;
   end
   else
   if FrameIndex >= LAST_RUN_FRAME + 15 then
@@ -305,7 +321,7 @@ end;
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  drawPerson(frames[35]); // номер проверяемого кадра
+  drawPerson(frames[38]); // номер проверяемого кадра
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);

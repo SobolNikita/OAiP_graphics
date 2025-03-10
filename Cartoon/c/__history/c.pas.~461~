@@ -267,12 +267,19 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array
 
 procedure TForm1.DrawCharacter;
 begin
- if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 13 then
+if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 65 then
+begin
+  //прыжок
+    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-LAST_RUN_FRAME) mod CNT_JUMP_FRAMES + 1 )]);
+    XImage := XImage - 15;
+  end
+
+else if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 13 then
       begin
   //бег первый
     frames[FrameIndex mod CNT_RUN_FRAMES + 1, 14] := 2;
     drawPerson(frames[FrameIndex mod CNT_RUN_FRAMES + 1]);
-    XImage := XImage - 15;
+    XImage := XImage - 25;
   end
   else
   if FrameIndex >= LAST_RUN_FRAME + 15 then
