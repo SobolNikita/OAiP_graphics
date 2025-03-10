@@ -9,8 +9,6 @@ uses
   Vcl.MPlayer;
 
 type
-  TArr = array [1 .. 4, 1 .. 2, 1 .. 2] of integer;
-
   TForm1 = class(TForm)
     Button1: TButton;
     Timer1: TTimer;
@@ -40,7 +38,7 @@ RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2, RStick, scaleStick: integer);
 
 const CNT_RUN_FRAMES = 11;
       CNT_JUMP_FRAMES = 15;
-      CNT_HIT_FRAMES = 1;
+      CNT_HIT_FRAMES = 11;
       LAST_RUN_FRAME = 28;
 
 var
@@ -48,7 +46,7 @@ var
   X, Y: integer;
   MC: TMyCanvas;
   bgScales: array[1..CNT_JUMP_FRAMES] of real = (
-    1, 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.25, 1.2, 1.15, 1.1, 1.05, 1, 1
+     1, 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.25, 1.2, 1.15, 1.1, 1.05, 1, 1
   );
   Y_JUMP_POS: array[1..CNT_JUMP_FRAMES] of integer = (
     -3000, -2800, -2700, -2400, -2100, -2000, -2100, -2400, -2400, -2500, -2600, -2700, -2800, -2900, -3000
@@ -151,9 +149,7 @@ var
   DestRect: TRect;
   scale: real;
 begin
-
   scale := 1;
-
   if (FrameIndex >= LAST_RUN_FRAME) and (FrameIndex < LAST_RUN_FRAME + 15) then
   begin
     scale := bgScales[((FrameIndex-LAST_RUN_FRAME) mod CNT_JUMP_FRAMES + 1)];
@@ -165,10 +161,9 @@ begin
 
   BitMap := TBitmap.Create;
   try
-    BitMap.LoadFromFile('Images/fon.bmp'); // Укажите путь к изображению фона
+    BitMap.LoadFromFile('Images/fon.bmp');
     DestRect := Rect(XImage, YImage, Round(BitMap.Width * Scale), Round(BitMap.Height * Scale));
     Canvas.StretchDraw(DestRect, BitMap);
-    //Canvas.Draw(XImage, YImage, BitMap); // Рисуем фон
   finally
     BitMap.Free;
   end;
@@ -243,10 +238,29 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array
 
         (500, 800, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0),
 
-
         //hit
 
-        (500, 800, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0)
+        (500, 800, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0),
+
+        (500, 700, 50, 290, 120, 200, 250, 160, 220, 300, 200, 310, 0, 0),
+
+        (500, 600, 50, 350, 90, 220, 240, 190, 270, 300, 200, 310, 0, 0),
+
+        (500, 550, 50, 355, 60, 150, 270, 150, 320, 320, 260, 320, 0, 0),
+
+        (500, 500, 50, 0,  320, 110, 40,  110, 355, 340, 30, 10, 340, 1),
+
+        (500, 500, 50, 0,  320, 70, 40,  150, 340, 350, 30, 10, 350, 1),
+
+        (500, 500, 50, 0,  320, 10, 40,  140, 330, 10, 40, 10, 350, 1),
+
+        (500, 500, 50, 0,  320, 70, 40,  150, 340, 350, 30, 10, 350, 1),
+
+        (500, 500, 50, 0,  320, 10, 40,  140, 330, 10, 40, 10, 350, 1),
+
+         (500, 500, 50, 0,  320, 70, 40,  150, 340, 350, 30, 10, 350, 2),
+
+        (500, 500, 50, 0,  320, 110, 40,  110, 355, 340, 30, 10, 340, 2)
 
 );
 
@@ -274,24 +288,23 @@ begin
   MC := TMyCanvas.Create; // используем конструктор родительского класса
   MC.Handle := Canvas.Handle; // назначаем холст окна областью вывода
   DrawBackground; // Рисуем фон
-  DrawCharacter; // Рисуем персонажа
+ DrawCharacter; // Рисуем персонажа
 end;
 
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  drawPerson(frames[1]); // номер проверяемого кадра
+  drawPerson(frames[35]); // номер проверяемого кадра
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-
   //Музыка
   MediaPlayer1.FileName := 'music/fon_music.mp3';
   MediaPlayer1.Open;
   MediaPlayer1.Play;
   //Музыка
-
+  Canvas.Pen.Width := 4;
   XImage := 0; // Инициализация позиции фона
   YImage := -3000; // Инициализация позиции фона
   Timer2.Enabled := True;
@@ -312,7 +325,6 @@ end;
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   FrameIndex := FrameIndex + 1; // Переход к следующему кадру
-
   X := X + 1;
   if (X >= ClientWidth - 20) then
     Timer1.Enabled := false;
@@ -321,8 +333,7 @@ end;
 procedure TForm1.Timer2Timer(Sender: TObject);
 begin
   DrawFrame; // Рисуем текущий кадр
-  // Обновляем позицию фона
-  XImage := XImage - 8; // Двигаем фон влево
+   XImage := XImage - 8;
 end;
 
 end.
