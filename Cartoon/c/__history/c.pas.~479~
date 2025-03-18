@@ -40,6 +40,7 @@ const CNT_RUN_FRAMES = 11;
       CNT_JUMP_FRAMES = 15;
       CNT_HIT_FRAMES = 11;
       LAST_RUN_FRAME = 28;
+      CNT_JUMP2_FRAMES = 25;
 
 var
   Form1: TForm1;
@@ -51,6 +52,7 @@ var
   Y_JUMP_POS: array[1..CNT_JUMP_FRAMES] of integer = (
     -3000, -2800, -2700, -2400, -2100, -2000, -2100, -2400, -2400, -2500, -2600, -2700, -2800, -2900, -3000
   );
+  curaddY: integer;
 implementation
 
 {$R *.dfm}
@@ -180,7 +182,7 @@ end;
   X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
   RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
 }
-var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array[1..14] of integer =
+var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_JUMP2_FRAMES] of array[1..14] of integer =
   (
         //run
 
@@ -260,25 +262,90 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES] of array
 
          (500, 500, 50, 0,  320, 70, 40,  150, 340, 350, 30, 10, 350, 2),
 
-        (500, 500, 50, 0,  320, 110, 40,  110, 355, 340, 30, 10, 340, 2)
+        (500, 500, 50, 0,  320, 110, 40,  110, 355, 340, 30, 10, 340, 2),
+
+        // jump 2
+
+        (500, 500, 50, 5, 110, 190, 150, 205, 10, 270, 25, 0, 52, 1),
+
+        (500, 450, 50, 10, 170, 180, 135, 145, 335, 305, 55, 350, 246, 1),
+
+        (500, 450, 50, 0, 180, 180, 135, 145, 340, 250, 30, 25, 249, 1),
+
+        (500, 400, 50, 340, 200, 210, 90, 193, 340, 330, 30, 320, 240, 1),
+
+        (500, 400, 50, 20, 215, 230, 170, 190, 0, 340, 50, 350, 289, 1),
+
+        (500, 350, 50, 40, 215, 215, 165, 190, 30, 25, 120, 55, 283, 1),
+
+        (500, 350, 50, 50, 215, 210, 185, 190, 135, 85, 95, 90, 289, 1),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 120, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 130, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 140, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 160, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 181, 328, 45, 25, 315, 175, 180, 205, 190, 0, 0),
+
+        (500, 400, 50, 160, 10, 310, 15, 315, 135, 140, 145, 150, 0, 0),
+
+        (500, 400, 50, 150, 80, 0, 340, 315, 100, 115, 115, 130, 0, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+
+        (500, 600, 50, 305, 170, 140, 90, 135, 320, 50, 340, 50, 0, 0),
+
+        (500, 800, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0)
 
 );
 
 
 procedure TForm1.DrawCharacter;
 begin
- if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 70 then
+  if (curaddY < 0) and (YImage > -1200) then
+  begin
+    curaddY := -curaddY;
+  end;
+  if (curaddY > 0) and (YImage <= -3000) then
+  begin
+    curaddY := 0;
+  end;
+  if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 42 + CNT_JUMP2_FRAMES then
+  begin
+    XImage := XImage + 12;
+  end
+  else if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 42 then
 begin
   //прыжок второй
-    drawPerson(frames[CNT_RUN_FRAMES + ((FrameIndex-LAST_RUN_FRAME + 1) mod CNT_JUMP_FRAMES + 1 )]);
-    XImage := XImage - 15;
+    drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES +  + 1]);    ((FrameIndex - (CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 42)) mod CNT_JUMP2_FRAMES)
+    XImage := XImage - 70;
+    YImage := YImage - curaddY;
   end
 else if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 13 then
       begin
   //бег второй
     frames[FrameIndex mod CNT_RUN_FRAMES + 1, 14] := 2;
     drawPerson(frames[FrameIndex mod CNT_RUN_FRAMES + 1]);
-    XImage := XImage - 25;
+    XImage := XImage - 40;
   end
   else
   if FrameIndex >= LAST_RUN_FRAME + 15 then
@@ -313,12 +380,13 @@ end;
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  drawPerson(frames[37]); // номер проверяемого кадра
+  drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 19]); // номер проверяемого кадра
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
   //Музыка
+  curaddY := -40;
   MediaPlayer1.FileName := 'music/fon_music.mp3';
   MediaPlayer1.Open;
   MediaPlayer1.Play;
@@ -352,7 +420,7 @@ end;
 procedure TForm1.Timer2Timer(Sender: TObject);
 begin
   DrawFrame; // Рисуем текущий кадр
-   XImage := XImage - 8;
+   XImage := XImage - 12;
 end;
 
 end.

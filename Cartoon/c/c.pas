@@ -41,6 +41,7 @@ const CNT_RUN_FRAMES = 11;
       CNT_HIT_FRAMES = 11;
       LAST_RUN_FRAME = 28;
       CNT_JUMP2_FRAMES = 25;
+      CNT_WIN_FRAMES = 4;
 
 var
   Form1: TForm1;
@@ -182,7 +183,7 @@ end;
   X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
   RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
 }
-var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_JUMP2_FRAMES] of array[1..14] of integer =
+var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_JUMP2_FRAMES + CNT_WIN_FRAMES] of array[1..14] of integer =
   (
         //run
 
@@ -266,19 +267,19 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_JUM
 
         // jump 2
 
-        (500, 500, 50, 5, 110, 190, 150, 205, 10, 270, 25, 0, 52, 1),
+        (500, 500, 50, 5, 110, 190, 150, 205, 10, 270, 25, 0, 52, 2),
 
-        (500, 450, 50, 10, 170, 180, 135, 145, 335, 305, 55, 350, 246, 1),
+        (500, 450, 50, 10, 170, 180, 135, 145, 335, 305, 55, 350, 246, 2),
 
-        (500, 450, 50, 0, 180, 180, 135, 145, 340, 250, 30, 25, 249, 1),
+        (500, 450, 50, 0, 180, 180, 135, 145, 340, 250, 30, 25, 249, 2),
 
-        (500, 400, 50, 340, 200, 210, 90, 193, 340, 330, 30, 320, 240, 1),
+        (500, 400, 50, 340, 200, 210, 90, 193, 340, 330, 30, 320, 240, 2),
 
-        (500, 400, 50, 20, 215, 230, 170, 190, 0, 340, 50, 350, 289, 1),
+        (500, 400, 50, 20, 215, 230, 170, 190, 0, 340, 50, 350, 289, 2),
 
-        (500, 350, 50, 40, 215, 215, 165, 190, 30, 25, 120, 55, 283, 1),
+        (500, 350, 50, 40, 215, 215, 165, 190, 30, 25, 120, 55, 283, 2),
 
-        (500, 350, 50, 50, 215, 210, 185, 190, 135, 85, 95, 90, 289, 1),
+        (500, 350, 50, 50, 215, 210, 185, 190, 135, 85, 95, 90, 289, 2),
 
         (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
 
@@ -296,25 +297,40 @@ var frames: array[1..CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_JUM
 
         (500, 400, 50, 150, 80, 0, 340, 315, 100, 115, 115, 130, 0, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 400, 50, 320, 200, 205, 180, 190, 230, 220, 200, 185, 282, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 450, 50, 315, 200, 205, 180, 190, 225, 215, 200, 185, 282, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 500, 50, 310, 200, 205, 180, 190, 225, 215, 200, 185, 282, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 550, 50, 300, 200, 205, 180, 190, 220, 210, 200, 195, 282, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 600, 50, 295, 200, 205, 180, 190, 225, 210, 200, 200, 282, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 650, 50, 290, 200, 205, 180, 190, 220, 215, 195, 190, 282, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 700, 50, 285, 200, 205, 180, 190, 225, 230, 200, 185, 282, 0),
 
-        (500, 350, 50, 110, 200, 205, 180, 190, 190, 135, 200, 185, 282, 0),
+        (500, 750, 50, 280, 200, 205, 180, 190, 225, 215, 200, 185, 282, 0),
 
-        (500, 600, 50, 305, 170, 140, 90, 135, 320, 50, 340, 50, 0, 0),
+        (500, 775, 50, 275, 190, 205, 180, 190, 220, 210, 195, 190, 0, 0),
 
-        (500, 800, 50, 270, 190, 150, 150, 180, 190, 250, 240, 245, 0, 0)
+        (500, 800, 50, 270, 190, 205, 150, 180, 210, 250, 240, 185, 0, 0),
+
+        //win
+
+        {
+          X, Y, scale, RBody, RLeftH, RLeftH2, RRightH, RRightH2,
+          RLeftLeg, RLeftLeg2, RRightLeg, RRightLeg2: integer
+        }
+
+        (500, 500, 50, 0, 235, 180, 125, 180, 340, 0, 20, 0, 0, 0),
+
+        (500, 500, 50, 0, 225, 180, 135, 180, 340, 0, 20, 0, 0, 0),
+
+        (500, 500, 50, 0, 215, 180, 145, 180, 340, 0, 20, 0, 0, 0),
+
+        (500, 500, 50, 0, 225, 180, 135, 180, 340, 0, 20, 0, 0, 0)
 
 );
 
@@ -329,14 +345,17 @@ begin
   begin
     curaddY := 0;
   end;
-  if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 42 + CNT_JUMP2_FRAMES then
+
+  //win
+  if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 41 + CNT_JUMP2_FRAMES then
   begin
+    drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_JUMP2_FRAMES + CNT_HIT_FRAMES + ((FrameIndex - (CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 41 + CNT_JUMP2_FRAMES)) mod CNT_WIN_FRAMES) + 1]);
     XImage := XImage + 12;
   end
-  else if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 42 then
+  else if FrameIndex >= CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 41 then
 begin
   //прыжок второй
-    drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES +  + 1]);    ((FrameIndex - (CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 42)) mod CNT_JUMP2_FRAMES)
+    drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + ((FrameIndex - (CNT_RUN_FRAMES +CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 41)) mod CNT_JUMP2_FRAMES) + 1]);
     XImage := XImage - 70;
     YImage := YImage - curaddY;
   end
@@ -380,7 +399,7 @@ end;
 // Метод для рисования пробного кадра
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + 19]); // номер проверяемого кадра
+  drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_JUMP2_FRAMES + 1]); // номер проверяемого кадра
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
