@@ -12,22 +12,19 @@ object Form1: TForm1
   Font.Style = []
   TextHeight = 15
   object Button1: TButton
-    Left = 8
-    Top = 624
-    Width = 201
-    Height = 113
-    Caption = 'Button1'
+    Left = 512
+    Top = 304
+    Width = 239
+    Height = 127
+    Caption = 'WATCH'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBtnText
+    Font.Height = -33
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 0
     OnClick = Button1Click
-  end
-  object Button2: TButton
-    Left = 968
-    Top = 640
-    Width = 281
-    Height = 97
-    Caption = 'Button2'
-    TabOrder = 1
-    OnClick = Button2Click
   end
   object MediaPlayer1: TMediaPlayer
     Left = 1016
@@ -37,7 +34,7 @@ object Form1: TForm1
     DoubleBuffered = True
     Visible = False
     ParentDoubleBuffered = False
-    TabOrder = 2
+    TabOrder = 1
   end
   object Timer1: TTimer
     Enabled = False

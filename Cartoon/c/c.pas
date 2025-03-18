@@ -12,13 +12,11 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     Timer1: TTimer;
-    Button2: TButton;
     Timer2: TTimer;
     MediaPlayer1: TMediaPlayer;
     procedure FormPaint(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure Timer2Timer(Sender: TObject);
   private
     { Private declarations }
@@ -396,14 +394,10 @@ begin
  DrawCharacter; // Рисуем персонажа
 end;
 
-// Метод для рисования пробного кадра
-procedure TForm1.Button2Click(Sender: TObject);
-begin
-  drawPerson(frames[CNT_RUN_FRAMES + CNT_JUMP_FRAMES + CNT_HIT_FRAMES + CNT_JUMP2_FRAMES + 1]); // номер проверяемого кадра
-end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
+Form1.Button1.Visible := false;
   //Музыка
   curaddY := -40;
   MediaPlayer1.FileName := 'music/fon_music.mp3';
